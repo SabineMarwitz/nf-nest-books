@@ -10,7 +10,8 @@ import {
   HttpCode,
   HttpStatus,
   UsePipes,
-  ValidationPipe
+  ValidationPipe,
+  ParseUUIDPipe
 } from '@nestjs/common';
 import { BooksService } from './books.service'; // Import the BooksService
 import { CreateBookDto } from "./dto/create-book.dto";
@@ -36,7 +37,7 @@ export class BooksController {
   }
 
   @Get(':id') // Handles GET requests to /books/:id (e.g., /books/a1b2c3d4)
-  findOne(@Param('id') id: string): Book {
+  findOne(@Param('id', ParseUUIDPipe) id: string): Book {
     // Delegates finding a single book to the BooksService
     const book = this.booksService.findOne(id);
     if (!book) {
@@ -47,7 +48,7 @@ export class BooksController {
   }
 
   @Put(':id') // Handles PUT requests to /books/:id
-  update(@Param('id') id: string, @Body() updatedBook: Partial<Book>): Book {
+  update(@Param('id', ParseUUIDPipe) id: string, @Body() updatedBook: Partial<Book>): Book {
     // Delegates updating a book to the BooksService
     const book = this.booksService.update(id, updatedBook);
     if (!book) {
@@ -58,7 +59,7 @@ export class BooksController {
 
   @Delete(':id') // Handles DELETE requests to /books/:id
   @HttpCode(HttpStatus.NO_CONTENT) // Set HTTP status to 204 No Content for successful deletion
-  remove(@Param('id') id: string): void {
+  remove(@Param('id', ParseUUIDPipe) id: string): void {
     // Delegates removal logic to the BooksService
     const removed = this.booksService.remove(id);
     if (!removed) {
