@@ -9,20 +9,24 @@ import {
   NotFoundException,
   HttpCode,
   HttpStatus,
+  UsePipes,
+  ValidationPipe
 } from '@nestjs/common';
 import { BooksService } from './books.service'; // Import the BooksService
+import { CreateBookDto } from "./dto/create-book.dto";
 import type { Book } from './interfaces/book.interface';
 
 @Controller('books') // Base route for all endpoints in this controller
+@UsePipes(new ValidationPipe()) // Applies ValidationPipe to all handlers in this controller
 export class BooksController {
   // Inject BooksService into the controller's constructor
   constructor(private readonly booksService: BooksService) {}
 
   @Post() // Handles POST requests to /books
   @HttpCode(HttpStatus.CREATED) // Set HTTP status to 201 Created for successful creation
-  create(@Body() book: Omit<Book, 'id'>): Book {
+  create(@Body() createBookDto: CreateBookDto): Book { 
     // Delegates the creation logic to the BooksService
-    return this.booksService.create(book);
+    return this.booksService.create(createBookDto); 
   }
 
   @Get() // Handles GET requests to /books
